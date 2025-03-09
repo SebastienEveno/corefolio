@@ -35,10 +35,10 @@ from corefolio.constraints import Constraints
 
 # Define your universe and constraints
 universe = Universe(data)
-constraints = Constraints()
+constraints = Constraints(max_assets=5)
 
 # Create an optimizer instance
-optimizer = Optimizer(universe, constraints, sense="maximize", max_assets=5)
+optimizer = Optimizer(universe, constraints, sense="maximize")
 
 # Optimize the portfolio
 selected_assets = optimizer.optimize()
