@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "corefolio"
-version = { file = "corefolio/_version.py" }
+version = "0.2.0"
 description = "A package for optimizing asset selection using CVXPY."
 authors = [
     { name = "Sebastien Eveno", email = "sebastien.louis.eveno@gmail.com" }
