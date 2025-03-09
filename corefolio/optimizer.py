@@ -7,11 +7,10 @@ from corefolio.universe import Universe
 
 
 class Optimizer:
-    def __init__(self, universe: Universe, constraints: Constraints, sense: str = "maximize", max_assets=5):
+    def __init__(self, universe: Universe, constraints: Constraints, sense: str = "maximize"):
         self.universe = universe
         self.constraints = constraints
         self.sense = self._parse_sense(sense)
-        self.max_assets = max_assets
 
     def _parse_sense(self, sense: str):
         sense_map = {"maximize": 1, "minimize": -1}
@@ -32,7 +31,7 @@ class Optimizer:
         objective = cp.Maximize(self.sense * values @ x)
 
         # Define constraints
-        constraints = self.constraints.apply_constraints(x, self.max_assets)
+        constraints = self.constraints.apply_constraints(x)
 
         # Solve problem
         problem = cp.Problem(objective, constraints)
