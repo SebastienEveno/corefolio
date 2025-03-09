@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "quantfolio"
+name = "corefolio"
 version = "0.1.0"
 description = "A package for optimizing asset selection using CVXPY."
 authors = [
@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["quantfolio"]
+packages = ["corefolio"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

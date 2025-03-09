@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 
-from quantfolio.universe import Universe
+from corefolio.universe import Universe
 
 
 def test_universe_initialization():
