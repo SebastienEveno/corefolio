@@ -1,3 +1,5 @@
+"""Tests for the Universe class."""
+
 import pytest
 import pandas as pd
 

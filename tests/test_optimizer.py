@@ -1,3 +1,5 @@
+"""Tests for the Optimizer class."""
+
 import pandas as pd
 
 from quantfolio.constraints import Constraints

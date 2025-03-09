@@ -1,3 +1,5 @@
+"""This module contains the Universe class."""
+
 import pandas as pd
 
 
