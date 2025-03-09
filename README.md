@@ -1,13 +1,13 @@
-# quantfolio
+# CoreFolio
 
-`quantfolio` is a Python package for optimizing asset selection using CVXPY. It allows users to define a universe of assets, apply constraints, and optimize the portfolio based on specified criteria.
+`corefolio` is a Python package for optimizing asset selection using CVXPY. It allows users to define a universe of assets, apply constraints, and optimize the portfolio based on specified criteria.
 
 ## Installation
 
 To install the package, use the following command:
 
 ```sh
-pip install quantfolio
+pip install corefolio
 ```
 
 ## Requirements
@@ -19,9 +19,9 @@ pip install quantfolio
 ## Usage
 
 ```python
-from quantfolio.optimizer import Optimizer
-from quantfolio.universe import Universe
-from quantfolio.constraints import Constraints
+from corefolio.optimizer import Optimizer
+from corefolio.universe import Universe
+from corefolio.constraints import Constraints
 
 # Define your universe and constraints
 universe = Universe(data)

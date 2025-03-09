@@ -2,9 +2,9 @@
 
 import pandas as pd
 
-from quantfolio.constraints import Constraints
-from quantfolio.universe import Universe
-from quantfolio.optimizer import Optimizer
+from corefolio.constraints import Constraints
+from corefolio.universe import Universe
+from corefolio.optimizer import Optimizer
 
 
 def test_optimizer():

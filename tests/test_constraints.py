@@ -2,7 +2,7 @@
 
 import cvxpy as cp
 
-from quantfolio.constraints import Constraints
+from corefolio.constraints import Constraints
 
 
 def test_apply_constraints():

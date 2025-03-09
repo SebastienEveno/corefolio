@@ -2,8 +2,8 @@
 
 import cvxpy as cp
 
-from quantfolio.constraints import Constraints
-from quantfolio.universe import Universe
+from corefolio.constraints import Constraints
+from corefolio.universe import Universe
 
 
 class Optimizer:
