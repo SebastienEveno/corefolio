@@ -4,7 +4,10 @@ import pandas as pd
 
 
 class Universe:
+    """A class used to represent the universe of assets."""
+
     def __init__(self, df: pd.DataFrame, id_column: str = "ID") -> None:
+        """Initialize the Universe class."""
         if df.isna().any().any():
             raise Exception("DataFrame contains NaN values.")
         if df[id_column].duplicated().any():

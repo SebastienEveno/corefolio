@@ -7,13 +7,17 @@ from quantfolio.universe import Universe
 
 
 class Optimizer:
+    """A class used to optimize the portfolio."""
+
     def __init__(self, universe: Universe, constraints: Constraints, sense: str = "maximize", max_assets=5):
+        """Initialize the Optimizer class."""
         self.universe = universe
         self.constraints = constraints
         self.sense = self._parse_sense(sense)
         self.max_assets = max_assets
 
     def _parse_sense(self, sense: str):
+        """Parse the sense value."""
         sense_map = {"maximize": 1, "minimize": -1}
         if sense not in sense_map:
             raise ValueError(
@@ -21,6 +25,7 @@ class Optimizer:
         return sense_map[sense]
 
     def optimize(self):
+        """Optimize the portfolio."""
         df = self.universe.get_data()
         ids = df[self.universe.id_column].tolist()
         values = df["value"].values
