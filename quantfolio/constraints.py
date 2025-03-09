@@ -1,3 +1,5 @@
+"""This module contains the Constraints class, which is used to apply constraints to the optimization problem."""
+
 import cvxpy as cp
 
 

@@ -1,3 +1,5 @@
+"""This module contains the Optimizer class, which is responsible for optimizing the portfolio."""
+
 import cvxpy as cp
 
 from quantfolio.constraints import Constraints

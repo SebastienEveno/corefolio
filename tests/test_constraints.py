@@ -1,3 +1,5 @@
+"""Tests for the constraints module."""
+
 import cvxpy as cp
 
 from quantfolio.constraints import Constraints
