@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "quantfolio"
 version = "0.1.0"
-description = "A package for optimizing asset selection using Pyomo and CVXPY."
+description = "A package for optimizing asset selection using CVXPY."
 authors = [
     { name = "Sebastien Eveno", email = "sebastien.louis.eveno@gmail.com" }
 ]
@@ -13,7 +13,6 @@ license = "MIT"
 readme = "README.md"
 dependencies = [
     "pandas",
-    "pyomo >= 6.9.1",
     "cvxpy >= 1.6.2",
     "pytest"
 ]
@@ -23,3 +22,6 @@ packages = ["quantfolio"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.flake8]
+max-line-length = 88
