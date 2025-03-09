@@ -8,6 +8,7 @@ from quantfolio.optimizer import Optimizer
 
 
 def test_optimizer():
+    """Test the Optimizer class"""
     df = pd.DataFrame({"ID": [1, 2, 3, 4], "value": [10, 20, 30, 40]})
     universe = Universe(df)
     constraints = Constraints()
