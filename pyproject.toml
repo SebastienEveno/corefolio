@@ -16,7 +16,7 @@ dependencies = [
     "pandas==1.5.1",
     "cvxpy==1.6.2",
     "pytest==8.3.5",
-    "numpy==2.0.0"
+    "numpy==1.26.4"
 ]
 
 [tool.setuptools]
