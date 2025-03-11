@@ -54,3 +54,13 @@ def test_universe_number_of_assets_property():
     data = pd.DataFrame({"ID": [1, 2, 3], "value": [10, 20, 30]})
     universe = Universe(data)
     assert universe.number_of_assets == 3
+
+
+def test_universe_df_property():
+    data = pd.DataFrame({"ID": [1, 2, 3], "value": [10, 20, 30]})
+    universe = Universe(data)
+    df_copy = universe.df
+    assert df_copy.equals(data)
+    # Ensure the returned DataFrame is a copy and not the original
+    df_copy["value"] = [100, 200, 300]
+    assert not df_copy.equals(universe.df)

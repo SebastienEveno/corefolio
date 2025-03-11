@@ -28,6 +28,11 @@ class Universe:
         return self._df.copy()
 
     @property
+    def df(self) -> pd.DataFrame:
+        """Returns the Universe data as a DataFrame while keeping it protected from modification."""
+        return self.to_dataframe()
+
+    @property
     def id_column(self) -> str:
         """Returns the ID column name."""
         return self._id_column
