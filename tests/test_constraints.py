@@ -11,3 +11,8 @@ def test_apply_constraints():
     applied_constraints = constraints.apply_constraints(x)
     assert len(applied_constraints) == 1
     assert applied_constraints[0].args[1].value == 2
+
+
+def test_max_assets_property():
+    constraints = Constraints(max_assets=5)
+    assert constraints.max_assets == 5
