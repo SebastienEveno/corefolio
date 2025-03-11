@@ -1,44 +1,99 @@
 """This module contains the Optimizer class, which is responsible for optimizing the portfolio."""
 
 import cvxpy as cp
+import pandas as pd
+from typing import List
 
-from corefolio.constraints import Constraints
+from corefolio.constraint import Constraint
 from corefolio.universe import Universe
 
 
 class Optimizer:
-    def __init__(self, universe: Universe, constraints: Constraints, sense: str = "maximize"):
+    def __init__(self, universe: Universe, constraint: Constraint, sense: str = "maximize") -> None:
+        """
+        Initializes the Optimizer with a Universe, Constraint, and optimization sense.
+
+        Args:
+            universe (Universe): The Universe containing asset data.
+            constraint (Constraint): The Constraint to apply during optimization.
+            sense (str): The optimization sense, either 'maximize' or 'minimize'.
+
+        Raises:
+            ValueError: If the sense is not 'maximize' or 'minimize'.
+        """
         self.universe = universe
-        self.constraints = constraints
+        self.constraint = constraint
         self.sense = self._parse_sense(sense)
 
-    def _parse_sense(self, sense: str):
+    def _parse_sense(self, sense: str) -> int:
+        """
+        Parses the optimization sense.
+
+        Args:
+            sense (str): The optimization sense, either 'maximize' or 'minimize'.
+
+        Returns:
+            int: The parsed sense as 1 for 'maximize' and -1 for 'minimize'.
+
+        Raises:
+            ValueError: If the sense is not 'maximize' or 'minimize'.
+        """
         sense_map = {"maximize": 1, "minimize": -1}
         if sense not in sense_map:
             raise ValueError(
                 "Invalid sense value. Choose 'maximize' or 'minimize'.")
         return sense_map[sense]
 
-    def optimize(self):
-        df = self.universe.get_data()
+    def _create_decision_variables(self, num_assets: int) -> cp.Variable:
+        """
+        Creates decision variables for the optimization problem.
+
+        Args:
+            num_assets (int): The number of assets.
+
+        Returns:
+            cp.Variable: The decision variables.
+        """
+        return cp.Variable(num_assets, boolean=True)
+
+    def _create_objective(self, values: pd.Series, x: cp.Variable) -> cp.Maximize:
+        """
+        Creates the objective function for the optimization problem.
+
+        Args:
+            values (pd.Series): The asset values.
+            x (cp.Variable): The decision variables.
+
+        Returns:
+            cp.Maximize: The objective function.
+        """
+        return cp.Maximize(self.sense * values @ x)
+
+    def optimize(self) -> List[int]:
+        """
+        Optimizes the portfolio based on the given Universe and Constraints.
+
+        Returns:
+            List[int]: The list of selected asset IDs.
+        """
+        df = self.universe.to_dataframe()
         ids = df[self.universe.id_column].tolist()
         values = df["value"].values
 
         # Define decision variables
-        x = cp.Variable(len(ids), boolean=True)
+        x = self._create_decision_variables(len(ids))
 
         # Define objective
-        objective = cp.Maximize(self.sense * values @ x)
+        objective = self._create_objective(values, x)
 
         # Define constraints
-        constraints = self.constraints.apply_constraints(x)
+        constraints = [self.constraint.apply_constraint(x)]
 
         # Solve problem
         problem = cp.Problem(objective, constraints)
         problem.solve()
 
         # Get results
-        selected_ids = [ids[i]
-                        for i in range(len(ids)) if x.value[i] > 0.5]
+        selected_ids = [ids[i] for i in range(len(ids)) if x.value[i] > 0.5]
 
         return selected_ids
