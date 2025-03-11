@@ -4,12 +4,12 @@ import cvxpy as cp
 import pandas as pd
 from typing import List
 
-from corefolio.constraints import Constraints
+from corefolio.constraint import Constraint
 from corefolio.universe import Universe
 
 
 class Optimizer:
-    def __init__(self, universe: Universe, constraints: Constraints, sense: str = "maximize") -> None:
+    def __init__(self, universe: Universe, constraints: Constraint, sense: str = "maximize") -> None:
         """
         Initializes the Optimizer with a Universe, Constraints, and optimization sense.
 
