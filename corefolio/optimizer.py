@@ -9,20 +9,20 @@ from corefolio.universe import Universe
 
 
 class Optimizer:
-    def __init__(self, universe: Universe, constraint: Constraint, sense: str = "maximize") -> None:
+    def __init__(self, universe: Universe, constraints: List[Constraint], sense: str = "maximize") -> None:
         """
-        Initializes the Optimizer with a Universe, Constraint, and optimization sense.
+        Initializes the Optimizer with a Universe, Constraints, and optimization sense.
 
         Args:
             universe (Universe): The Universe containing asset data.
-            constraint (Constraint): The Constraint to apply during optimization.
+            constraints (List[Constraint]): The list of Constraints to apply during optimization.
             sense (str): The optimization sense, either 'maximize' or 'minimize'.
 
         Raises:
             ValueError: If the sense is not 'maximize' or 'minimize'.
         """
         self.universe = universe
-        self.constraint = constraint
+        self.constraints = constraints
         self.sense = self._parse_sense(sense)
 
     def _parse_sense(self, sense: str) -> int:
@@ -87,7 +87,8 @@ class Optimizer:
         objective = self._create_objective(values, x)
 
         # Define constraints
-        constraints = [self.constraint.apply_constraint(x)]
+        constraints = [constraint.apply_constraint(
+            x) for constraint in self.constraints]
 
         # Solve problem
         problem = cp.Problem(objective, constraints)
