@@ -7,6 +7,10 @@ class Universe:
     def __init__(self, df: pd.DataFrame, id_column: str = "ID") -> None:
         if df.isna().any().any():
             raise Exception("DataFrame contains NaN values.")
+
+        if id_column not in df.columns:
+            df[id_column] = range(1, len(df) + 1)
+
         if df[id_column].duplicated().any():
             raise Exception("DataFrame contains duplicate IDs.")
 
