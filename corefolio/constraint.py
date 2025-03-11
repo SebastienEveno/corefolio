@@ -1,13 +1,29 @@
-"""This module contains the Constraints class, which is used to apply constraints to the optimization problem."""
+"""This module contains the Constraints classes, which are used to apply constraints to the optimization problem."""
 
 import cvxpy as cp
 from typing import List
+from abc import ABC, abstractmethod
 
 
-class Constraint:
+class Constraint(ABC):
+    @abstractmethod
+    def apply_constraint(self, variables: List[cp.Variable]) -> cp.Constraint:
+        """
+        Applies the constraint to the optimization problem.
+
+        Args:
+            variables (List[cp.Variable]): The decision variables.
+
+        Returns:
+            cp.Constraint: The constraint.
+        """
+        pass
+
+
+class MaxAssetsConstraint(Constraint):
     def __init__(self, max_assets: int = 5) -> None:
         """
-        Initializes the Constraint with a maximum number of assets.
+        Initializes the MaxAssetsConstraint with a maximum number of assets.
 
         Args:
             max_assets (int): The maximum number of assets to select.
