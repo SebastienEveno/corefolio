@@ -31,12 +31,12 @@ pip install corefolio
 ```python
 from corefolio.optimizer import Optimizer
 from corefolio.universe import Universe
-from corefolio.constraint import Constraint
+from corefolio.constraint import MaxAssetsConstraint
 
 # Define your universe and constraints
 data = pd.DataFrame({"ID": [1, 2, 3, 4], "value": [10, 20, 30, 40]})
 universe = Universe(data)
-constraints = [Constraint(max_assets=5)]
+constraints = [MaxAssetsConstraint(max_assets=5)]
 
 # Create an optimizer instance
 optimizer = Optimizer(universe, constraints, sense="maximize")
