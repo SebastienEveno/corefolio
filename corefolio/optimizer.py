@@ -20,7 +20,7 @@ class Optimizer:
         return sense_map[sense]
 
     def optimize(self):
-        df = self.universe.get_data()
+        df = self.universe.to_dataframe()
         ids = df[self.universe.id_column].tolist()
         values = df["value"].values
 

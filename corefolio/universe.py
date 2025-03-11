@@ -14,13 +14,9 @@ class Universe:
         if df[id_column].duplicated().any():
             raise Exception("DataFrame contains duplicate IDs.")
 
-        self.df = df
-        self.id_column = id_column
-        self.number_of_assets = df[id_column].nunique()
-
-    def get_data(self) -> pd.DataFrame:
-        """Returns the Universe data as a DataFrame."""
-        return self.df
+        self._df = df
+        self._id_column = id_column
+        self._number_of_assets = df[id_column].nunique()
 
     @classmethod
     def from_dataframe(cls, df: pd.DataFrame, id_column: str = "ID"):
@@ -29,4 +25,14 @@ class Universe:
 
     def to_dataframe(self) -> pd.DataFrame:
         """Returns the Universe data as a DataFrame."""
-        return self.df
+        return self._df.copy()
+
+    @property
+    def id_column(self) -> str:
+        """Returns the ID column name."""
+        return self._id_column
+
+    @property
+    def number_of_assets(self) -> int:
+        """Returns the number of assets in the Universe."""
+        return self._number_of_assets

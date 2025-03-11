@@ -39,6 +39,6 @@ def test_universe_custom_id_column():
 def test_universe_create_id_column():
     data = pd.DataFrame({"value": [10, 20, 30]})
     universe = Universe(data)
-    assert "ID" in universe.df.columns
-    assert universe.df["ID"].tolist() == [1, 2, 3]
+    assert "ID" in universe.to_dataframe().columns
+    assert universe.to_dataframe()["ID"].tolist() == [1, 2, 3]
     assert universe.number_of_assets == 3
