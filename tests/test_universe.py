@@ -42,3 +42,15 @@ def test_universe_create_id_column():
     assert "ID" in universe.to_dataframe().columns
     assert universe.to_dataframe()["ID"].tolist() == [1, 2, 3]
     assert universe.number_of_assets == 3
+
+
+def test_universe_id_column_property():
+    data = pd.DataFrame({"ID": [1, 2, 3], "value": [10, 20, 30]})
+    universe = Universe(data)
+    assert universe.id_column == "ID"
+
+
+def test_universe_number_of_assets_property():
+    data = pd.DataFrame({"ID": [1, 2, 3], "value": [10, 20, 30]})
+    universe = Universe(data)
+    assert universe.number_of_assets == 3

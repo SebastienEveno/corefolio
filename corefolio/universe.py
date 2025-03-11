@@ -24,7 +24,7 @@ class Universe:
         return cls(df, id_column)
 
     def to_dataframe(self) -> pd.DataFrame:
-        """Returns the Universe data as a DataFrame."""
+        """Returns the Universe data as a DataFrame while keeping it protected from modification."""
         return self._df.copy()
 
     @property
