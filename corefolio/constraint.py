@@ -79,12 +79,28 @@ class MeanConstraint(Constraint):
         Returns:
             List[cp.Constraint]: The list of constraints.
         """
-        mean_value = df[self._column_name].mean()
-        column_values = df[self._column_name].values
-        selected_sum = cp.sum(cp.multiply(variables, column_values))
-        selected_count = cp.sum(variables)
-        return [selected_sum >= selected_count * (mean_value - self._tolerance),
-                selected_sum <= selected_count * (mean_value + self._tolerance)]
+        if pd.api.types.is_numeric_dtype(df[self._column_name]):
+            mean_value = df[self._column_name].mean()
+            column_values = df[self._column_name].values
+            selected_sum = cp.sum(cp.multiply(variables, column_values))
+            selected_count = cp.sum(variables)
+            return [selected_sum >= selected_count * (mean_value - self._tolerance),
+                    selected_sum <= selected_count * (mean_value + self._tolerance)]
+        else:
+            constraints = []
+            categories = df[self._column_name].unique()
+            for category in categories:
+                category_mask = (df[self._column_name] ==
+                                 category).astype(float)
+                category_frequency = category_mask.mean()
+                selected_sum = cp.sum(cp.multiply(
+                    variables, category_mask))
+                selected_count = cp.sum(variables)
+                constraints.append(selected_sum >=
+                                   selected_count * (category_frequency - self._tolerance))
+                constraints.append(selected_sum <=
+                                   selected_count * (category_frequency + self._tolerance))
+            return constraints
 
     @property
     def column_name(self) -> str:
