@@ -9,14 +9,15 @@ from corefolio.universe import Universe
 
 
 class Optimizer:
-    def __init__(self, universe: Universe, constraints: List[Constraint], sense: str = "maximize") -> None:
+    def __init__(self, universe: Universe, constraints: List[Constraint], sense: str = "maximize", target_column: str = "value") -> None:
         """
-        Initializes the Optimizer with a Universe, Constraints, and optimization sense.
+        Initializes the Optimizer with a Universe, Constraints, optimization sense, and target column.
 
         Args:
             universe (Universe): The Universe containing asset data.
             constraints (List[Constraint]): The list of Constraints to apply during optimization.
             sense (str): The optimization sense, either 'maximize' or 'minimize'.
+            target_column (str): The column name to be used for the optimization target.
 
         Raises:
             ValueError: If the sense is not 'maximize' or 'minimize'.
@@ -24,6 +25,7 @@ class Optimizer:
         self.universe = universe
         self.constraints = constraints
         self.sense = self._parse_sense(sense)
+        self.target_column = target_column
 
     def _parse_sense(self, sense: str) -> int:
         """
@@ -78,7 +80,7 @@ class Optimizer:
         """
         df = self.universe.to_dataframe()
         ids = df[self.universe.id_column].tolist()
-        values = df["value"].values
+        values = df[self.target_column].values
 
         # Define decision variables
         x = self._create_decision_variables(len(ids))
