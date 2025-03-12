@@ -26,9 +26,10 @@ def test_optimizer_with_mean_constraint():
     Test the Optimizer class with MeanConstraint.
     Ensures that the optimizer applies the mean constraint correctly.
     """
-    df = pd.DataFrame({"ID": [1, 2, 3, 4], "value": [10, 20, 30, 40]})
+    df = pd.DataFrame({"ID": [1, 2, 3, 4], "value": [
+                      10, 20, 30, 40], "other_value": [5, 5, 5, 5]})
     universe = Universe(df)
-    constraints = [MeanConstraint(reference_value=0.5, tolerance=0.1)]
+    constraints = [MeanConstraint(column_name="other_value", tolerance=0.01)]
     optimizer = Optimizer(universe, constraints, sense="maximize")
     selected_ids = optimizer.optimize()
     assert len(selected_ids) > 0
@@ -40,11 +41,12 @@ def test_optimizer_with_multiple_constraints():
     Test the Optimizer class with multiple constraints.
     Ensures that the optimizer applies all constraints correctly.
     """
-    df = pd.DataFrame({"ID": [1, 2, 3, 4], "value": [10, 20, 30, 40]})
+    df = pd.DataFrame({"ID": [1, 2, 3, 4], "value": [
+                      10, 20, 30, 40], "other_value": [5, 5, 5, 5]})
     universe = Universe(df)
     constraints = [
         MaxAssetsConstraint(max_assets=2),
-        MeanConstraint(reference_value=0.5, tolerance=0.1)
+        MeanConstraint(column_name="other_value", tolerance=0.01)
     ]
     optimizer = Optimizer(universe, constraints, sense="maximize")
     selected_ids = optimizer.optimize()

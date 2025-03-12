@@ -87,14 +87,18 @@ class Optimizer:
         objective = self._create_objective(values, x)
 
         # Define constraints
-        constraints = [constraint.apply_constraint(
-            x) for constraint in self.constraints]
+        constraints = []
+        for constraint in self.constraints:
+            constraints.extend(constraint.apply_constraint(x, df))
 
         # Solve problem
         problem = cp.Problem(objective, constraints)
         problem.solve()
 
         # Get results
+        if problem.status in ["infeasible", "infeasible_inaccurate"]:
+            return []
+
         selected_ids = [ids[i] for i in range(len(ids)) if x.value[i] > 0.5]
 
         return selected_ids
