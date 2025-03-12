@@ -3,19 +3,21 @@
 import cvxpy as cp
 from typing import List
 from abc import ABC, abstractmethod
+import pandas as pd
 
 
 class Constraint(ABC):
     @abstractmethod
-    def apply_constraint(self, variables: List[cp.Variable]) -> cp.Constraint:
+    def apply_constraint(self, variables: List[cp.Variable], df: pd.DataFrame) -> List[cp.Constraint]:
         """
         Applies the constraint to the optimization problem.
 
         Args:
             variables (List[cp.Variable]): The decision variables.
+            df (pd.DataFrame): The DataFrame containing asset data.
 
         Returns:
-            cp.Constraint: The constraint.
+            List[cp.Constraint]: The list of constraints.
         """
         pass
 
@@ -30,17 +32,18 @@ class MaxAssetsConstraint(Constraint):
         """
         self._max_assets = max_assets
 
-    def apply_constraint(self, variables: List[cp.Variable]) -> cp.Constraint:
+    def apply_constraint(self, variables: List[cp.Variable], df: pd.DataFrame) -> List[cp.Constraint]:
         """
         Applies the constraint to the optimization problem.
 
         Args:
             variables (List[cp.Variable]): The decision variables.
+            df (pd.DataFrame): The DataFrame containing asset data.
 
         Returns:
-            cp.Constraint: The constraint.
+            List[cp.Constraint]: The list of constraints.
         """
-        return cp.sum(variables) <= self._max_assets
+        return [cp.sum(variables) <= self._max_assets]
 
     @property
     def max_assets(self) -> int:
@@ -54,26 +57,44 @@ class MaxAssetsConstraint(Constraint):
 
 
 class MeanConstraint(Constraint):
-    def __init__(self, reference_value: float = 0.5, tolerance: float = 0.1) -> None:
+    def __init__(self, column_name: str, tolerance: float = 0.01) -> None:
         """
-        Initializes the MeanConstraint with a reference value and tolerance.
+        Initializes the MeanConstraint with a column name and tolerance.
 
         Args:
-            reference_value (float): The reference value for the mean constraint.
+            column_name (str): The column name to be used for the mean constraint.
             tolerance (float): The tolerance for the mean constraint.
         """
-        self._reference_value = reference_value
+        self._column_name = column_name
         self._tolerance = tolerance
 
-    @property
-    def reference_value(self) -> float:
+    def apply_constraint(self, variables: List[cp.Variable], df: pd.DataFrame) -> List[cp.Constraint]:
         """
-        Returns the reference value for the mean constraint.
+        Applies the mean constraint to the optimization problem.
+
+        Args:
+            variables (List[cp.Variable]): The decision variables.
+            df (pd.DataFrame): The DataFrame containing asset data.
 
         Returns:
-            float: The reference value for the mean constraint.
+            List[cp.Constraint]: The list of constraints.
         """
-        return self._reference_value
+        mean_value = df[self._column_name].mean()
+        column_values = df[self._column_name].values
+        selected_sum = cp.sum(cp.multiply(variables, column_values))
+        selected_count = cp.sum(variables)
+        return [selected_sum >= selected_count * (mean_value - self._tolerance),
+                selected_sum <= selected_count * (mean_value + self._tolerance)]
+
+    @property
+    def column_name(self) -> str:
+        """
+        Returns the column name for the mean constraint.
+
+        Returns:
+            str: The column name for the mean constraint.
+        """
+        return self._column_name
 
     @property
     def tolerance(self) -> float:
@@ -84,15 +105,3 @@ class MeanConstraint(Constraint):
             float: The tolerance for the mean constraint.
         """
         return self._tolerance
-
-    def apply_constraint(self, variables: List[cp.Variable]) -> cp.Constraint:
-        """
-        Applies the mean constraint to the optimization problem.
-
-        Args:
-            variables (List[cp.Variable]): The decision variables.
-
-        Returns:
-            cp.Constraint: The mean constraint.
-        """
-        return cp.abs(cp.mean(variables) - self._reference_value) <= self._tolerance
