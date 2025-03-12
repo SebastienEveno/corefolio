@@ -29,17 +29,27 @@ pip install corefolio
 ## Usage
 
 ```python
+import pandas as pd
 from corefolio.optimizer import Optimizer
 from corefolio.universe import Universe
-from corefolio.constraint import MaxAssetsConstraint
+from corefolio.constraint import MaxAssetsConstraint, MeanConstraint
 
 # Define your universe and constraints
-data = pd.DataFrame({"ID": [1, 2, 3, 4], "value": [10, 20, 30, 40]})
+data = pd.DataFrame(
+    {
+        "ID": [1, 2, 3, 4], 
+        "value": [10, 20, 30, 40], 
+        "other_value": [5, 5, 5, 5]
+    }
+)
 universe = Universe(data)
-constraints = [MaxAssetsConstraint(max_assets=5)]
+constraints = [
+    MaxAssetsConstraint(max_assets=2), 
+    MeanConstraint(column_name="other_value", tolerance=0.01)
+]
 
 # Create an optimizer instance
-optimizer = Optimizer(universe, constraints, sense="maximize")
+optimizer = Optimizer(universe, constraints, sense="maximize", target_column="value")
 
 # Optimize the portfolio
 selected_assets = optimizer.optimize()
