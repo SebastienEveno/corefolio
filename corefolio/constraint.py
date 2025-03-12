@@ -1,7 +1,7 @@
 """This module contains the Constraints classes, which are used to apply constraints to the optimization problem."""
 
 import cvxpy as cp
-from typing import List
+from typing import List, Optional
 from abc import ABC, abstractmethod
 import pandas as pd
 
@@ -57,16 +57,20 @@ class MaxAssetsConstraint(Constraint):
 
 
 class MeanConstraint(Constraint):
-    def __init__(self, column_name: str, tolerance: float = 0.01) -> None:
+    def __init__(self, column_name: str, tolerance: float = 0.01, min_value: Optional[float] = None, max_value: Optional[float] = None) -> None:
         """
-        Initializes the MeanConstraint with a column name and tolerance.
+        Initializes the MeanConstraint with a column name, tolerance, and optional minimum and maximum values.
 
         Args:
             column_name (str): The column name to be used for the mean constraint.
             tolerance (float): The tolerance for the mean constraint.
+            min_value (Optional[float]): The minimum value for the mean constraint.
+            max_value (Optional[float]): The maximum value for the mean constraint.
         """
         self._column_name = column_name
         self._tolerance = tolerance
+        self._min_value = min_value
+        self._max_value = max_value
 
     def apply_constraint(self, variables: List[cp.Variable], df: pd.DataFrame) -> List[cp.Constraint]:
         """
@@ -79,15 +83,19 @@ class MeanConstraint(Constraint):
         Returns:
             List[cp.Constraint]: The list of constraints.
         """
+        constraints = []
         if pd.api.types.is_numeric_dtype(df[self._column_name]):
             mean_value = df[self._column_name].mean()
             column_values = df[self._column_name].values
             selected_sum = cp.sum(cp.multiply(variables, column_values))
             selected_count = cp.sum(variables)
-            return [selected_sum >= selected_count * (mean_value - self._tolerance),
-                    selected_sum <= selected_count * (mean_value + self._tolerance)]
+
+            min_value = self._min_value if self._min_value is not None else mean_value - self._tolerance
+            max_value = self._max_value if self._max_value is not None else mean_value + self._tolerance
+
+            constraints.append(selected_sum >= selected_count * min_value)
+            constraints.append(selected_sum <= selected_count * max_value)
         else:
-            constraints = []
             categories = df[self._column_name].unique()
             for category in categories:
                 category_mask = (df[self._column_name] ==
@@ -96,11 +104,14 @@ class MeanConstraint(Constraint):
                 selected_sum = cp.sum(cp.multiply(
                     variables, category_mask))
                 selected_count = cp.sum(variables)
-                constraints.append(selected_sum >=
-                                   selected_count * (category_frequency - self._tolerance))
-                constraints.append(selected_sum <=
-                                   selected_count * (category_frequency + self._tolerance))
-            return constraints
+
+                min_value = self._min_value if self._min_value is not None else category_frequency - self._tolerance
+                max_value = self._max_value if self._max_value is not None else category_frequency + self._tolerance
+
+                constraints.append(selected_sum >= selected_count * min_value)
+                constraints.append(selected_sum <= selected_count * max_value)
+
+        return constraints
 
     @property
     def column_name(self) -> str:
@@ -121,3 +132,23 @@ class MeanConstraint(Constraint):
             float: The tolerance for the mean constraint.
         """
         return self._tolerance
+
+    @property
+    def min_value(self) -> Optional[float]:
+        """
+        Returns the minimum value for the mean constraint.
+
+        Returns:
+            Optional[float]: The minimum value for the mean constraint.
+        """
+        return self._min_value
+
+    @property
+    def max_value(self) -> Optional[float]:
+        """
+        Returns the maximum value for the mean constraint.
+
+        Returns:
+            Optional[float]: The maximum value for the mean constraint.
+        """
+        return self._max_value
